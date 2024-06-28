@@ -4,3 +4,5 @@
 # Ignore CSV files
 *.csv
 
+#Ignore tgz file as well
+*.tgz
