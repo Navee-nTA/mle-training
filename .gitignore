@@ -6,3 +6,6 @@
 
 #Ignore tgz file as well
 *.tgz
+
+#
+*.log
