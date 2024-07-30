@@ -6,6 +6,9 @@ import numpy as np
 import pandas as pd
 from logger import get_logger
 from scipy.stats import randint
+
+# from sklearn.metrics import mean_absolute_error, mean_squared_error
+from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LinearRegression
@@ -17,7 +20,23 @@ from sklearn.model_selection import (
 )
 from sklearn.tree import DecisionTreeRegressor
 
-# from sklearn.metrics import mean_absolute_error, mean_squared_error
+rooms_ix, bedrooms_ix, population_ix, households_ix = 3, 4, 5, 6
+
+
+class CombinedAttributesAdder(BaseEstimator, TransformerMixin):
+    def __init__(self):  # no *args or **kargs
+        pass
+
+    def fit(self, X, y=None):
+        return self  # nothing else to do
+
+    def transform(self, X):
+        rooms_per_household = X[:, rooms_ix] / X[:, households_ix]
+        population_per_household = X[:, population_ix] / X[:, households_ix]
+        bedrooms_per_room = X[:, bedrooms_ix] / X[:, rooms_ix]
+        return np.c_[
+            X, rooms_per_household, population_per_household, bedrooms_per_room
+        ]
 
 
 def load_housing_data(processed_data_path):
@@ -87,16 +106,6 @@ def main(args):
 
     housing = strat_train_set.copy()
 
-    housing["rooms_per_household"] = (
-        housing["total_rooms"] / housing["households"]
-    )
-    housing["bedrooms_per_room"] = (
-        housing["total_bedrooms"] / housing["total_rooms"]
-    )
-    housing["population_per_household"] = (
-        housing["population"] / housing["households"]
-    )
-
     housing = strat_train_set.drop("median_house_value", axis=1)
     housing_labels = strat_train_set["median_house_value"].copy()
 
@@ -107,15 +116,20 @@ def main(args):
     housing_tr = pd.DataFrame(
         X, columns=housing_num.columns, index=housing.index
     )
-    housing_tr["rooms_per_household"] = (
-        housing_tr["total_rooms"] / housing_tr["households"]
+
+    # Added Pipeline
+    attr_adder = CombinedAttributesAdder()
+    housing_extra_attribs = attr_adder.transform(housing_tr.values)
+
+    cols = list(housing.columns)
+    cols.extend(
+        [
+            "rooms_per_household",
+            "population_per_household",
+            "bedroom_per_household",
+        ]
     )
-    housing_tr["bedrooms_per_room"] = (
-        housing_tr["total_bedrooms"] / housing_tr["total_rooms"]
-    )
-    housing_tr["population_per_household"] = (
-        housing_tr["population"] / housing_tr["households"]
-    )
+    housing_tr = pd.DataFrame(housing_extra_attribs, columns=cols)
 
     housing_cat = housing[["ocean_proximity"]]
     housing_prepared = housing_tr.join(
