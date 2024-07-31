@@ -5,7 +5,11 @@ import urllib.request
 
 import numpy as np
 import pandas as pd
-from logger import get_logger
+from HousePricePrediction.logger import get_logger
+
+import mlflow
+import mlflow.sklearn
+
 
 DOWNLOAD_ROOT = "https://raw.githubusercontent.com/ageron/handson-ml/master/"
 HOUSING_PATH = os.path.join("data", "raw")
@@ -91,7 +95,7 @@ def main(args):
         index=False,
     )
     logger.info(f"Data processed and saved to {args.processed_data_path}")
-
+    
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -126,3 +130,5 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     main(args)
+    with mlflow.start_run():
+        mlflow.log_artifact(args.processed_data_path)

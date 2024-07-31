@@ -1,0 +1,15 @@
+artifact_uri: file:///home/naveen/mle-training/mlruns/0/40221725ad4d45458837fd50c1c4db01/artifacts
+end_time: 1721980034814
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 40221725ad4d45458837fd50c1c4db01
+run_name: flawless-perch-324
+run_uuid: 40221725ad4d45458837fd50c1c4db01
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721980034804
+status: 3
+tags: []
+user_id: naveen

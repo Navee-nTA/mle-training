@@ -4,7 +4,7 @@ import os
 import joblib
 import numpy as np
 import pandas as pd
-from logger import get_logger
+from HousePricePrediction.logger import get_logger
 from scipy.stats import randint
 
 # from sklearn.metrics import mean_absolute_error, mean_squared_error
@@ -19,6 +19,9 @@ from sklearn.model_selection import (
     train_test_split,
 )
 from sklearn.tree import DecisionTreeRegressor
+import mlflow
+import mlflow.sklearn
+
 
 rooms_ix, bedrooms_ix, population_ix, households_ix = 3, 4, 5, 6
 
@@ -215,6 +218,8 @@ def main(args):
 
     logger.info(f"Model trained and saved to {args.model_path}")
 
+    return lin_reg, tree_reg, forest_reg
+    
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -248,4 +253,9 @@ if __name__ == "__main__":
         help="Not to write logs to console",
     )
     args = parser.parse_args()
-    main(args)
+    lin_reg, tree_reg, forest_reg = main(args)
+
+    with mlflow.start_run():
+        mlflow.sklearn.log_model(lin_reg, "model/lin_reg")
+        mlflow.sklearn.log_model(tree_reg, "model/tree_reg")
+        mlflow.sklearn.log_model(forest_reg, "model/forest_reg")

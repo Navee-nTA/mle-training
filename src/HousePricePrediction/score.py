@@ -6,11 +6,12 @@ import os
 import joblib
 import numpy as np
 import pandas as pd
-from logger import get_logger
+from HousePricePrediction.logger import get_logger
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.model_selection import StratifiedShuffleSplit, train_test_split
-
+import mlflow
+import mlflow.sklearn
 
 def load_housing_data(processed_data_path):
     """
@@ -177,6 +178,10 @@ def main(args):
     print(f"Forest RMSE: {final_rmse}")
     logger.info(f"Forest RMSE: {final_rmse}")
 
+    return final_mse, tree_rmse, lin_mae
+ 
+
+    
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -210,4 +215,8 @@ if __name__ == "__main__":
         help="Not to write logs to console",
     )
     args = parser.parse_args()
-    main(args)
+    final_mse, tree_rmse, lin_mae = main(args)
+    with mlflow.start_run():
+        mlflow.log_metric("Forest RMSE", final_mse)
+        mlflow.log_metric("tree_rmse", tree_rmse)
+        mlflow.log_metric("lin_mae", lin_mae)

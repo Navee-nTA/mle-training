@@ -1,0 +1,15 @@
+artifact_uri: file:///home/naveen/mle-training/mlruns/0/3b55867b0aa24c0fb27403fded9c2932/artifacts
+end_time: 1721979338445
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 3b55867b0aa24c0fb27403fded9c2932
+run_name: victorious-fawn-121
+run_uuid: 3b55867b0aa24c0fb27403fded9c2932
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721979338439
+status: 3
+tags: []
+user_id: naveen
