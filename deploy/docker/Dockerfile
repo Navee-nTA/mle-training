@@ -30,7 +30,11 @@ WORKDIR /app
 #     appuser
 
 COPY ./requirements.txt .
-
+COPY ./HousePricePrediction-0.0.0-py3-none-any.whl .
+RUN mkdir -p ./data/raw
+RUN mkdir -p ./data/processed
+RUN pip install --upgrade pip
+RUN pip install HousePricePrediction-0.0.0-py3-none-any.whl
 # Download dependencies as a separate step to take advantage of Docker's caching.
 # Leverage a cache mount to /root/.cache/pip to speed up subsequent builds.
 # Leverage a bind mount to requirements.txt to avoid having to copy them into
@@ -41,4 +45,4 @@ RUN python -m pip install -r requirements.txt
 # USER appuser
 
 # Run the application.
-CMD ["python" , "-m ", "HousePricePrediction.main"]
+CMD python -m HousePricePrediction.main
